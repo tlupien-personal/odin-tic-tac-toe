@@ -12,17 +12,17 @@ const gameBoard = (function (w = 3, h = 3) {
 
   let board = createBlankBoard();
 
-  const place = function (token, x, y) {
-    if (board[x][y] === " ") {
-      board[x][y] = token;
+  const place = function (token, row, col) {
+    if (board[row][col] === " ") {
+      board[row][col] = token;
       return true;
     } else {
       return false;
     }
   };
 
-  const readCell = function (x, y) {
-    return board[x][y];
+  const readCell = function (row, col) {
+    return board[row][col];
   };
 
   const readBoard = function () {
@@ -48,25 +48,54 @@ const gameBoard = (function (w = 3, h = 3) {
 })();
 
 const createPlayer = function (name, token) {
-  const placeToken = function (x, y) {
-    return gameBoard.place(token, x, y);
+  const placeToken = function (row, col) {
+    return gameBoard.place(token, row, col);
   };
 
   return { name, placeToken };
 };
 
-const createGame = function (name1, name2) {
-  const player1 = createPlayer(name1, "X");
-  const player2 = createPlayer(name2, "O");
-
-  let activePlayer = player1;
-  let activeGame = true;
+const game = (function () {
+  let player1 = null;
+  let player2 = null;
+  let ready = false;
+  let activePlayer = null;
+  let gameOver = false;
   let winner = null;
+
+  const reset = function (isRematch) {
+    if (!isRematch) {
+      player1 = null;
+      player2 = null;
+      ready = false;
+      activePlayer = null;
+    } else {
+      activePlayer = player1;
+    }
+    gameOver = false;
+    winner = null;
+    gameBoard.reset();
+  };
+
+  const addPlayer = function (playerName) {
+    if (!player1) {
+      player1 = createPlayer(playerName, "X");
+      activePlayer = player1;
+      return true;
+    } else if (!player2) {
+      player2 = createPlayer(playerName, "O");
+      ready = true;
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   const readState = function () {
     return {
       activePlayer,
-      activeGame,
+      ready,
+      gameOver,
       winner,
     };
   };
@@ -75,18 +104,19 @@ const createGame = function (name1, name2) {
     activePlayer = activePlayer === player1 ? player2 : player1;
   };
 
-  const takeTurn = function (x, y) {
-    const tokenPlaced = activePlayer.placeToken(x, y);
-    const win = detectWin();
+  const takeTurn = function (row, col) {
+    if (!ready || gameOver) {
+      return false;
+    }
+
+    const tokenPlaced = activePlayer.placeToken(row, col);
+    detectWin();
     const full = detectEnd();
 
     if (!tokenPlaced) {
       return false;
-    } else if (win) {
-      winner = activePlayer;
-      activeGame = false;
-    } else if (full) {
-      activeGame = false;
+    } else if (winner || full) {
+      gameOver = true;
     } else {
       swapTurn();
     }
@@ -148,53 +178,105 @@ const createGame = function (name1, name2) {
         cellValues.push(cellValue);
       }
       if (cellValues.every((c) => c === "X")) {
-        return player1;
+        winner = player1;
       }
       if (cellValues.every((c) => c === "O")) {
-        return player2;
+        winner = player2;
       }
     }
-    return false;
   };
 
   const detectEnd = function () {
     return gameBoard.isFull();
   };
 
-  return { takeTurn, readState };
-};
+  return { addPlayer, takeTurn, readState, reset };
+})();
 
-const createConsoleDisplay = function (game) {
+const consoleContext = (function () {
   const displayBoard = function () {
     for (row of gameBoard.readBoard()) {
       console.log(row);
     }
+    console.log("-".repeat(15))
   };
 
-  const doTurn = function (x, y) {
+  const addPlayer = function (playerName) {
+    game.addPlayer(playerName);
+  };
+
+  const reset = function (isRematch) {
+    game.reset(isRematch);
+  };
+
+  const doTurn = function (row, col) {
     const currentState = game.readState();
-    if (!currentState.activeGame) {
-      console.log("The game is already over!")
-      return
+    if (!currentState.ready) {
+      console.log("Game needs more players to begin");
+      return;
+    } else if (currentState.gameOver) {
+      console.log("Game has ended");
+      return;
     }
 
-    const tookTurn = game.takeTurn(x, y);
+    const tookTurn = game.takeTurn(row, col);
+    const newState = game.readState();
+
     if (!tookTurn) {
-      console.log("Can't go there!")
-    } else {
-      const newState = game.readState();
-      if (!newState.activeGame) {
-        console.log("Game Over!")
-        if (newState.winner) {
-          console.log(`${newState.winner.name} wins!`)
-        } else {
-          console.log("It's a tie!")
-        }
+      console.log("Not allowed");
+    } else if (newState.gameOver) {
+      console.log("Game Over!");
+      if (newState.winner) {
+        console.log(`${newState.winner.name} wins!`);
+      } else {
+        console.log("It's a tie!");
       }
     }
     displayBoard();
   };
 
-  displayBoard();
-  return { doTurn };
-};
+  return { doTurn, addPlayer, reset };
+})();
+
+// For testing purposes
+// Yes, I could write actual tests, but I ostensibly don't know how
+// at this point in the curriculum, so this is what I'm doing
+
+const testGame = function () {
+  // not ready yet
+  consoleContext.doTurn(0,0)
+  
+  // add 1st player
+  consoleContext.addPlayer("ONE (X)");
+
+  // still not ready yet
+  consoleContext.doTurn(0,0)
+
+  // add 2nd player
+  consoleContext.addPlayer("TWO (O)");
+
+  // fill all squares
+  consoleContext.doTurn(0,0) // works (X)
+  consoleContext.doTurn(0,0) // can't go there, remains O turn
+
+  consoleContext.doTurn(1,1) // O actual turn
+  consoleContext.doTurn(2,2) // X
+  consoleContext.doTurn(1,2) // etc.
+  consoleContext.doTurn(0,2)
+  consoleContext.doTurn(2,0)
+  consoleContext.doTurn(1,0)
+  consoleContext.doTurn(0,1)
+  consoleContext.doTurn(2,1) // game over / tie
+
+  consoleContext.reset(true) // rematch, keeps players
+
+  consoleContext.doTurn(0,0) // goes back to X turn
+  consoleContext.doTurn(0,1)
+  consoleContext.doTurn(1,1)
+  consoleContext.doTurn(0,2)
+  consoleContext.doTurn(2,2) // x wins
+
+  consoleContext.reset(false) // need new players
+  consoleContext.doTurn(0,0) // doesn't work (no players)
+
+}
