@@ -198,7 +198,7 @@ const consoleContext = (function () {
     for (row of gameBoard.readBoard()) {
       console.log(row);
     }
-    console.log("-".repeat(15))
+    console.log("-".repeat(15));
   };
 
   const addPlayer = function (playerName) {
@@ -238,45 +238,108 @@ const consoleContext = (function () {
   return { doTurn, addPlayer, reset };
 })();
 
+const display = (function () {
+  const container = document.querySelector("#game-container");
+  const iconData = {
+    X: {
+      viewBox: "0 0 24 24",
+      title: "close",
+      path: "M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z",
+    },
+    O: {
+      viewBox: "0 0 24 24",
+      title: "circle-outline",
+      path: "M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z",
+    },
+  };
+
+  const createIcon = function (iconData, xmlns = "http://www.w3.org/2000/svg") {
+    const icon = document.createElementNS(xmlns, "svg");
+    icon.setAttribute("xmlns", xmlns);
+    icon.setAttribute("viewBox", iconData.viewBox);
+
+    const titleElement = document.createElementNS(xmlns, "title");
+    titleElement.innerText = iconData.title;
+
+    const pathElement = document.createElementNS(xmlns, "path");
+    pathElement.setAttribute("d", iconData.path);
+
+    icon.appendChild(titleElement);
+    icon.appendChild(pathElement);
+    return icon;
+  };
+
+  const createCell = function (cellValue) {
+    const cell = document.createElement("div");
+    cell.classList.add("board-cell");
+    if (cellValue === " ") {
+      return cell;
+    }
+    const icon = createIcon(iconData[cellValue]);
+    icon.classList.add(`${cellValue}-icon`);
+    cell.appendChild(icon);
+    return cell;
+  };
+
+  const renderBoard = function () {
+    container.innerText = "";
+    const boardBox = document.createElement("div");
+    boardBox.classList.add("game-board");
+
+    const boardData = gameBoard.readBoard();
+    boardData.forEach((row) => {
+      row.forEach((cell) => {
+        const cellDisplay = createCell(cell);
+        boardBox.appendChild(cellDisplay);
+      });
+    });
+    container.appendChild(boardBox);
+  };
+
+  return { renderBoard };
+})();
+
 // For testing purposes
 // Yes, I could write actual tests, but I ostensibly don't know how
 // at this point in the curriculum, so this is what I'm doing
 
 const testGame = function () {
   // not ready yet
-  consoleContext.doTurn(0,0)
-  
+  consoleContext.doTurn(0, 0);
+
   // add 1st player
   consoleContext.addPlayer("ONE (X)");
 
   // still not ready yet
-  consoleContext.doTurn(0,0)
+  consoleContext.doTurn(0, 0);
 
   // add 2nd player
   consoleContext.addPlayer("TWO (O)");
 
   // fill all squares
-  consoleContext.doTurn(0,0) // works (X)
-  consoleContext.doTurn(0,0) // can't go there, remains O turn
+  consoleContext.doTurn(0, 0); // works (X)
+  consoleContext.doTurn(0, 0); // can't go there, remains O turn
 
-  consoleContext.doTurn(1,1) // O actual turn
-  consoleContext.doTurn(2,2) // X
-  consoleContext.doTurn(1,2) // etc.
-  consoleContext.doTurn(0,2)
-  consoleContext.doTurn(2,0)
-  consoleContext.doTurn(1,0)
-  consoleContext.doTurn(0,1)
-  consoleContext.doTurn(2,1) // game over / tie
+  consoleContext.doTurn(1, 1); // O actual turn
+  consoleContext.doTurn(2, 2); // X
+  consoleContext.doTurn(1, 2); // etc.
+  consoleContext.doTurn(0, 2);
+  consoleContext.doTurn(2, 0);
+  // consoleContext.doTurn(1, 0);
+  // consoleContext.doTurn(0, 1);
+  // consoleContext.doTurn(2, 1); // game over / tie
 
-  consoleContext.reset(true) // rematch, keeps players
+  // consoleContext.reset(true); // rematch, keeps players
 
-  consoleContext.doTurn(0,0) // goes back to X turn
-  consoleContext.doTurn(0,1)
-  consoleContext.doTurn(1,1)
-  consoleContext.doTurn(0,2)
-  consoleContext.doTurn(2,2) // x wins
+  // consoleContext.doTurn(0, 0); // goes back to X turn
+  // consoleContext.doTurn(0, 1);
+  // consoleContext.doTurn(1, 1);
+  // consoleContext.doTurn(0, 2);
+  // consoleContext.doTurn(2, 2); // x wins
 
-  consoleContext.reset(false) // need new players
-  consoleContext.doTurn(0,0) // doesn't work (no players)
+  // consoleContext.reset(false); // need new players
+  // consoleContext.doTurn(0, 0); // doesn't work (no players)
+};
 
-}
+testGame();
+display.renderBoard();

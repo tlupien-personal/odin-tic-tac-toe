@@ -1,0 +1,24 @@
+#game-container {
+  padding: 50px;
+}
+
+.game-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  width: 600px;
+  height: 600px;
+  border: 5px solid black;
+}
+
+.board-cell {
+  border: 5px solid black;
+}
+
+.X-icon {
+  fill: coral;
+}
+
+.O-icon {
+  fill: teal;
+}
