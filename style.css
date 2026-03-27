@@ -29,7 +29,7 @@
   border: 2px solid black;
   border-radius: 20px;
   margin: 0 50px;
-  box-shadow: 2px 2px 4px #666666;
+  box-shadow: 2px 2px 4px darkslategrey;
   padding: 20px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -40,7 +40,7 @@
   font-family: Arial, Helvetica, sans-serif;
   border: 1px solid black;
   border-radius: 10px;
-  box-shadow: 1px 1px 2px #666666;
+  box-shadow: 1px 1px 2px darkslategrey;
   padding: 10px;
 }
 
@@ -52,7 +52,7 @@
 }
 
 input {
-  width: 100%
+  width: 100%;
 }
 
 .add-btn {
@@ -63,11 +63,15 @@ input {
   align-self: flex-end;
 }
 
-.indicator-card:nth-child(1) .add-btn {
+.indicator-card:nth-child(1) .add-btn,
+.player-active:nth-child(1),
+.x-victory {
   background-color: coral;
 }
 
-.indicator-card:nth-child(3) .add-btn {
+.indicator-card:nth-child(3) .add-btn,
+.player-active:nth-child(3),
+.o-victory {
   background-color: teal;
   color: white;
 }
@@ -77,18 +81,22 @@ input {
   cursor: pointer;
 }
 
-.player-active:nth-child(1) {
-  background-color: coral
-}
-
-.player-active:nth-child(3) {
-  background-color: teal;
-  color: white;
+.player-name,
+.indicator-card:nth-child(2) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .player-name {
   font-size: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+}
+
+.indicator-card:nth-child(2) {
+  font-size: 1.25rem;
+}
+
+.issue-msg {
+  background-color: darkslategrey;
+  color: white;
 }

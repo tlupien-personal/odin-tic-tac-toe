@@ -235,7 +235,7 @@ const display = (function () {
     const formData = new FormData(e.target.parentElement);
     const playerName = formData.get("playerName");
     game.addPlayer(playerName);
-    showGame();
+    showGame(true);
   };
 
   const createPlayerForm = function () {
@@ -303,12 +303,28 @@ const display = (function () {
   };
 
   const doMsgCard = function (state, tookTurn) {
-    // incomplete
     const msgCard = getCard(2);
     if (!state.ready) {
       msgCard.innerText = "Waiting for Players to Join...";
+      msgCard.classList.add("issue-msg");
+    } else if (state.gameOver) {
+      if (state.winner) {
+        msgCard.innerText = `${state.winner.name} wins!`;
+        if (state.winner === state.player1) {
+          msgCard.classList.add("x-victory");
+        } else {
+          msgCard.classList.add("o-victory");
+        }
+      } else {
+        msgCard.innerText = "Tie Game";
+        msgCard.classList.remove("issue-msg");
+      }
+    } else if (!tookTurn) {
+      msgCard.innerText = "You can't go there!";
+      msgCard.classList.add("issue-msg");
     } else {
       msgCard.innerText = "";
+      msgCard.classList.remove("issue-msg");
     }
   };
 
