@@ -1,0 +1,118 @@
+#game-container {
+  padding: 50px;
+}
+
+.game-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  width: 600px;
+  height: 600px;
+  border: 5px solid black;
+}
+
+.board-cell {
+  border: 5px solid black;
+}
+
+.X-icon {
+  fill: coral;
+}
+
+.O-icon {
+  fill: teal;
+}
+
+#indicator {
+  width: 600px;
+  height: 200px;
+  border: 2px solid black;
+  border-radius: 20px;
+  margin: 0 50px;
+  box-shadow: 2px 2px 4px grey;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.indicator-card {
+  font-family: Arial, Helvetica, sans-serif;
+  border: 1px solid black;
+  border-radius: 10px;
+  box-shadow: 1px 1px 2px grey;
+  padding: 10px;
+}
+
+#player-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: space-around;
+}
+
+input {
+  width: 100%;
+}
+
+.add-btn,
+.reset-btn {
+  padding: 5px 15px;
+  border-radius: 5px;
+  border: none;
+  opacity: 0.85;
+}
+
+.add-btn {
+  align-self: flex-end;
+}
+
+.indicator-card:nth-child(1) .add-btn,
+.player-active:nth-child(1),
+.x-victory {
+  background-color: coral;
+}
+
+.indicator-card:nth-child(3) .add-btn,
+.player-active:nth-child(3),
+.o-victory {
+  background-color: teal;
+  color: white;
+}
+
+.add-btn:hover,
+.reset-btn:hover {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.player-name,
+.indicator-card:nth-child(2) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.player-name {
+  font-size: 1.5rem;
+}
+
+.indicator-card:nth-child(2) {
+  font-size: 1.25rem;
+}
+
+.issue-msg {
+  background-color: lavender;
+}
+
+.reset-btn {
+  background-color: black;
+  color: white;
+}
+
+.o-victory > .reset-btn {
+  background-color: white;
+  color: black;
+}
