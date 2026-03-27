@@ -104,7 +104,7 @@ input {
 }
 
 .issue-msg {
-  background-color: lavender
+  background-color: lavender;
 }
 
 .reset-btn {
@@ -112,7 +112,7 @@ input {
   color: white;
 }
 
-.o-victory>.reset-btn {
+.o-victory > .reset-btn {
   background-color: white;
   color: black;
 }
