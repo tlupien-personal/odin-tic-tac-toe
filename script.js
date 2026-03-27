@@ -94,6 +94,8 @@ const game = (function () {
   const readState = function () {
     return {
       activePlayer,
+      player1,
+      player2,
       ready,
       gameOver,
       winner,
@@ -195,6 +197,10 @@ const game = (function () {
 
 const display = (function () {
   const container = document.querySelector("#game-container");
+  const getCard = function (n) {
+    return document.querySelector(`.indicator-card:nth-child(${n})`);
+  };
+
   const iconData = {
     X: {
       viewBox: "0 0 24 24",
@@ -224,30 +230,91 @@ const display = (function () {
     return icon;
   };
 
-  const doTurn = function (row, col) {
-    const currentState = game.readState();
-    if (!currentState.ready) {
-      console.log("Game needs more players to begin");
-      return;
-    } else if (currentState.gameOver) {
-      console.log("Game has ended");
-      return;
-    }
+  const addPlayer = function (e) {
+    e.preventDefault();
+    const formData = new FormData(e.target.parentElement);
+    const playerName = formData.get("playerName");
+    game.addPlayer(playerName);
+    showGame();
+  };
 
-    const tookTurn = game.takeTurn(row, col);
-    const newState = game.readState();
+  const createPlayerForm = function () {
+    const form = document.createElement("form");
+    form.id = "player-form";
 
-    if (!tookTurn) {
-      console.log("Not allowed");
-    } else if (newState.gameOver) {
-      console.log("Game Over!");
-      if (newState.winner) {
-        console.log(`${newState.winner.name} wins!`);
+    const label = document.createElement("label");
+    label.setAttribute("for", "player-name");
+    label.innerText = "Name";
+
+    const input = document.createElement("input");
+    input.setAttribute("type", "text");
+    input.id = "player-name";
+    input.setAttribute("name", "playerName");
+
+    const button = document.createElement("button");
+    button.classList.add("add-btn");
+    button.innerText = "Add";
+    button.addEventListener("click", (e) => addPlayer(e));
+
+    form.appendChild(label);
+    form.appendChild(input);
+    form.appendChild(button);
+
+    return form;
+  };
+
+  const attachPlayerForm = function (card) {
+    card.innerText = "";
+    const form = createPlayerForm();
+    card.appendChild(form);
+  };
+
+  const doPlayerCards = function (state) {
+    const player1Exists = state.player1 !== null;
+    const player2Exists = state.player2 !== null;
+    if (!player1Exists) {
+      const formCard = getCard(1);
+      attachPlayerForm(formCard);
+    } else if (!player2Exists) {
+      const formCard = getCard(3);
+      attachPlayerForm(formCard);
+
+      const nameCard = getCard(1);
+      nameCard.innerText = state.player1.name;
+      nameCard.classList.add("player-name");
+      nameCard.classList.add("player-active");
+    } else {
+      const p1Card = getCard(1);
+      p1Card.innerText = state.player1.name;
+      p1Card.classList.add("player-name");
+
+      const p2Card = getCard(3);
+      p2Card.innerText = state.player2.name;
+      p2Card.classList.add("player-name");
+
+      if (state.activePlayer === state.player2) {
+        p2Card.classList.add("player-active");
+        p1Card.classList.remove("player-active");
       } else {
-        console.log("It's a tie!");
+        p1Card.classList.add("player-active");
+        p2Card.classList.remove("player-active");
       }
     }
-    renderBoard();
+  };
+
+  const doMsgCard = function (state, tookTurn) {
+    // incomplete
+    const msgCard = getCard(2);
+    if (!state.ready) {
+      msgCard.innerText = "Waiting for Players to Join...";
+    } else {
+      msgCard.innerText = "";
+    }
+  };
+
+  const doTurn = function (row, col) {
+    const tookTurn = game.takeTurn(row, col);
+    showGame(tookTurn);
   };
 
   const cellClick = function (e) {
@@ -290,9 +357,16 @@ const display = (function () {
     container.appendChild(boardBox);
   };
 
-  renderBoard();
+  const showGame = function (tookTurn) {
+    const state = game.readState();
+    doPlayerCards(state);
+    doMsgCard(state, tookTurn);
+    renderBoard();
+  };
+
+  showGame(true);
 })();
 
 // add dummy players
-game.addPlayer("ONE (X)");
-game.addPlayer("TWO (O)");
+// game.addPlayer("ONE (X)");
+// game.addPlayer("TWO (O)");

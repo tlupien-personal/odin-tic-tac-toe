@@ -22,3 +22,73 @@
 .O-icon {
   fill: teal;
 }
+
+#indicator {
+  width: 600px;
+  height: 200px;
+  border: 2px solid black;
+  border-radius: 20px;
+  margin: 0 50px;
+  box-shadow: 2px 2px 4px #666666;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.indicator-card {
+  font-family: Arial, Helvetica, sans-serif;
+  border: 1px solid black;
+  border-radius: 10px;
+  box-shadow: 1px 1px 2px #666666;
+  padding: 10px;
+}
+
+#player-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: space-around;
+}
+
+input {
+  width: 100%
+}
+
+.add-btn {
+  padding: 5px 15px;
+  border-radius: 5px;
+  border: none;
+  opacity: 0.8;
+  align-self: flex-end;
+}
+
+.indicator-card:nth-child(1) .add-btn {
+  background-color: coral;
+}
+
+.indicator-card:nth-child(3) .add-btn {
+  background-color: teal;
+  color: white;
+}
+
+.add-btn:hover {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.player-active:nth-child(1) {
+  background-color: coral
+}
+
+.player-active:nth-child(3) {
+  background-color: teal;
+  color: white;
+}
+
+.player-name {
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
