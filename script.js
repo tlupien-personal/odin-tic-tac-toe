@@ -193,51 +193,6 @@ const game = (function () {
   return { addPlayer, takeTurn, readState, reset };
 })();
 
-const consoleContext = (function () {
-  const displayBoard = function () {
-    for (row of gameBoard.readBoard()) {
-      console.log(row);
-    }
-    console.log("-".repeat(15));
-  };
-
-  const addPlayer = function (playerName) {
-    game.addPlayer(playerName);
-  };
-
-  const reset = function (isRematch) {
-    game.reset(isRematch);
-  };
-
-  const doTurn = function (row, col) {
-    const currentState = game.readState();
-    if (!currentState.ready) {
-      console.log("Game needs more players to begin");
-      return;
-    } else if (currentState.gameOver) {
-      console.log("Game has ended");
-      return;
-    }
-
-    const tookTurn = game.takeTurn(row, col);
-    const newState = game.readState();
-
-    if (!tookTurn) {
-      console.log("Not allowed");
-    } else if (newState.gameOver) {
-      console.log("Game Over!");
-      if (newState.winner) {
-        console.log(`${newState.winner.name} wins!`);
-      } else {
-        console.log("It's a tie!");
-      }
-    }
-    displayBoard();
-  };
-
-  return { doTurn, addPlayer, reset };
-})();
-
 const display = (function () {
   const container = document.querySelector("#game-container");
   const iconData = {
@@ -335,50 +290,9 @@ const display = (function () {
     container.appendChild(boardBox);
   };
 
-  return { renderBoard };
+  renderBoard();
 })();
 
-// For testing purposes
-// Yes, I could write actual tests, but I ostensibly don't know how
-// at this point in the curriculum, so this is what I'm doing
-
-const testGame = function () {
-  // not ready yet
-  consoleContext.doTurn(0, 0);
-
-  // add 1st player
-  consoleContext.addPlayer("ONE (X)");
-
-  // still not ready yet
-  consoleContext.doTurn(0, 0);
-
-  // add 2nd player
-  consoleContext.addPlayer("TWO (O)");
-
-  // fill all squares
-  // consoleContext.doTurn(0, 0); // works (X)
-  // consoleContext.doTurn(0, 0); // can't go there, remains O turn
-
-  // consoleContext.doTurn(1, 1); // O actual turn
-  // consoleContext.doTurn(2, 2); // X
-  // consoleContext.doTurn(1, 2); // etc.
-  // consoleContext.doTurn(0, 2);
-  // consoleContext.doTurn(2, 0);
-  // consoleContext.doTurn(1, 0);
-  // consoleContext.doTurn(0, 1);
-  // consoleContext.doTurn(2, 1); // game over / tie
-
-  // consoleContext.reset(true); // rematch, keeps players
-
-  // consoleContext.doTurn(0, 0); // goes back to X turn
-  // consoleContext.doTurn(0, 1);
-  // consoleContext.doTurn(1, 1);
-  // consoleContext.doTurn(0, 2);
-  // consoleContext.doTurn(2, 2); // x wins
-
-  // consoleContext.reset(false); // need new players
-  // consoleContext.doTurn(0, 0); // doesn't work (no players)
-};
-
-testGame();
-display.renderBoard();
+// add dummy players
+game.addPlayer("ONE (X)");
+game.addPlayer("TWO (O)");
