@@ -29,7 +29,7 @@
   border: 2px solid black;
   border-radius: 20px;
   margin: 0 50px;
-  box-shadow: 2px 2px 4px darkslategrey;
+  box-shadow: 2px 2px 4px grey;
   padding: 20px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -40,7 +40,7 @@
   font-family: Arial, Helvetica, sans-serif;
   border: 1px solid black;
   border-radius: 10px;
-  box-shadow: 1px 1px 2px darkslategrey;
+  box-shadow: 1px 1px 2px grey;
   padding: 10px;
 }
 
@@ -55,11 +55,15 @@ input {
   width: 100%;
 }
 
-.add-btn {
+.add-btn,
+.reset-btn {
   padding: 5px 15px;
   border-radius: 5px;
   border: none;
-  opacity: 0.8;
+  opacity: 0.85;
+}
+
+.add-btn {
   align-self: flex-end;
 }
 
@@ -76,7 +80,8 @@ input {
   color: white;
 }
 
-.add-btn:hover {
+.add-btn:hover,
+.reset-btn:hover {
   opacity: 1;
   cursor: pointer;
 }
@@ -84,8 +89,10 @@ input {
 .player-name,
 .indicator-card:nth-child(2) {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 10px;
 }
 
 .player-name {
@@ -97,6 +104,15 @@ input {
 }
 
 .issue-msg {
-  background-color: darkslategrey;
+  background-color: lavender
+}
+
+.reset-btn {
+  background-color: black;
   color: white;
+}
+
+.o-victory>.reset-btn {
+  background-color: white;
+  color: black;
 }

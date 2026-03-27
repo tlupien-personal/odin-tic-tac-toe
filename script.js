@@ -302,23 +302,55 @@ const display = (function () {
     }
   };
 
+  const resetGame = function (e, isRematch) {
+    game.reset(isRematch);
+    for (let i = 1; i <= 3; i++) {
+      card = getCard(i);
+      card.classList.remove(
+        "player-name",
+        "player-active",
+        "issue-msg",
+        "x-victory",
+        "o-victory",
+      );
+    }
+    showGame(true);
+  };
+
   const doMsgCard = function (state, tookTurn) {
     const msgCard = getCard(2);
+    msgCard.innerText = "";
     if (!state.ready) {
       msgCard.innerText = "Waiting for Players to Join...";
       msgCard.classList.add("issue-msg");
     } else if (state.gameOver) {
+      const msg = document.createElement("p");
       if (state.winner) {
-        msgCard.innerText = `${state.winner.name} wins!`;
+        msg.innerText = `${state.winner.name} wins!`;
         if (state.winner === state.player1) {
           msgCard.classList.add("x-victory");
         } else {
           msgCard.classList.add("o-victory");
         }
       } else {
-        msgCard.innerText = "Tie Game";
-        msgCard.classList.remove("issue-msg");
+        msg.innerText = "Tie Game";
       }
+
+      msgCard.classList.remove("issue-msg");
+      msgCard.appendChild(msg);
+
+      const rematch = document.createElement("button");
+      rematch.classList.add("reset-btn");
+      rematch.innerText = "Rematch";
+      rematch.addEventListener("click", (e) => resetGame(e, true));
+
+      const newGame = document.createElement("button");
+      newGame.innerText = "New Game";
+      newGame.classList.add("reset-btn");
+      newGame.addEventListener("click", (e) => resetGame(e, false));
+
+      msgCard.appendChild(rematch);
+      msgCard.appendChild(newGame);
     } else if (!tookTurn) {
       msgCard.innerText = "You can't go there!";
       msgCard.classList.add("issue-msg");
@@ -382,7 +414,3 @@ const display = (function () {
 
   showGame(true);
 })();
-
-// add dummy players
-// game.addPlayer("ONE (X)");
-// game.addPlayer("TWO (O)");
