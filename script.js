@@ -269,9 +269,47 @@ const display = (function () {
     return icon;
   };
 
-  const createCell = function (cellValue) {
+  const doTurn = function (row, col) {
+    const currentState = game.readState();
+    if (!currentState.ready) {
+      console.log("Game needs more players to begin");
+      return;
+    } else if (currentState.gameOver) {
+      console.log("Game has ended");
+      return;
+    }
+
+    const tookTurn = game.takeTurn(row, col);
+    const newState = game.readState();
+
+    if (!tookTurn) {
+      console.log("Not allowed");
+    } else if (newState.gameOver) {
+      console.log("Game Over!");
+      if (newState.winner) {
+        console.log(`${newState.winner.name} wins!`);
+      } else {
+        console.log("It's a tie!");
+      }
+    }
+    renderBoard();
+  };
+
+  const cellClick = function (e) {
+    const cell = e.currentTarget;
+    const row = cell.getAttribute("data-row");
+    const col = cell.getAttribute("data-col");
+    doTurn(row, col);
+  };
+
+  const createCell = function (cellValue, row, col) {
     const cell = document.createElement("div");
     cell.classList.add("board-cell");
+    cell.setAttribute("data-row", row);
+    cell.setAttribute("data-col", col);
+
+    cell.addEventListener("click", (e) => cellClick(e));
+
     if (cellValue === " ") {
       return cell;
     }
@@ -287,12 +325,13 @@ const display = (function () {
     boardBox.classList.add("game-board");
 
     const boardData = gameBoard.readBoard();
-    boardData.forEach((row) => {
-      row.forEach((cell) => {
-        const cellDisplay = createCell(cell);
-        boardBox.appendChild(cellDisplay);
-      });
-    });
+
+    for (let i = 0; i < boardData.length; i++) {
+      for (let j = 0; j < boardData.length; j++) {
+        const cell = createCell(boardData[i][j], i, j);
+        boardBox.appendChild(cell);
+      }
+    }
     container.appendChild(boardBox);
   };
 
@@ -317,14 +356,14 @@ const testGame = function () {
   consoleContext.addPlayer("TWO (O)");
 
   // fill all squares
-  consoleContext.doTurn(0, 0); // works (X)
-  consoleContext.doTurn(0, 0); // can't go there, remains O turn
+  // consoleContext.doTurn(0, 0); // works (X)
+  // consoleContext.doTurn(0, 0); // can't go there, remains O turn
 
-  consoleContext.doTurn(1, 1); // O actual turn
-  consoleContext.doTurn(2, 2); // X
-  consoleContext.doTurn(1, 2); // etc.
-  consoleContext.doTurn(0, 2);
-  consoleContext.doTurn(2, 0);
+  // consoleContext.doTurn(1, 1); // O actual turn
+  // consoleContext.doTurn(2, 2); // X
+  // consoleContext.doTurn(1, 2); // etc.
+  // consoleContext.doTurn(0, 2);
+  // consoleContext.doTurn(2, 0);
   // consoleContext.doTurn(1, 0);
   // consoleContext.doTurn(0, 1);
   // consoleContext.doTurn(2, 1); // game over / tie
